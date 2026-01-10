@@ -6,15 +6,17 @@ async function main() {
   await prisma.admin.create({
     data: {
       id: "admin1",
-      username: "admin1",
-    },
-  });
-  await prisma.admin.create({
-    data: {
-      id: "admin2",
       username: "admin2",
+      password: "12345678",
+      role: "ADMIN",
     },
   });
+  // await prisma.admin.create({
+  //   data: {
+  //     id: "admin2",
+  //     username: "admin2",
+  //   },
+  // });
 
   // GRADE
   for (let i = 1; i <= 6; i++) {

@@ -1,24 +1,27 @@
 import prisma from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
-
+// import { auth } from "@clerk/nextjs/server";
+// import userProfileStore from "@/components/store/user.store";
+import { userDetailManage } from "./userDetailManage";
 const Announcements = async () => {
-  const { userId, sessionClaims } = auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  // const {role, userId}= userProfileStore();
+  const user = await userDetailManage();
+  // const { userId, sessionClaims } = auth();
+  // const role = (sessionClaims?.metadata as { role?: string })?.role;
 
   const roleConditions = {
-    teacher: { lessons: { some: { teacherId: userId! } } },
-    student: { students: { some: { id: userId! } } },
-    parent: { students: { some: { parentId: userId! } } },
+    teacher: { lessons: { some: { teacherId: user?.id! } } },
+    student: { students: { some: { id: user?.id! } } },
+    parent: { students: { some: { parentId: user?.id! } } },
   };
 
   const data = await prisma.announcement.findMany({
     take: 3,
     orderBy: { date: "desc" },
     where: {
-      ...(role !== "admin" && {
+      ...(user?.role !== "admin" && {
         OR: [
           { classId: null },
-          { class: roleConditions[role as keyof typeof roleConditions] || {} },
+          { class: roleConditions[user?.role as keyof typeof roleConditions] || {} },
         ],
       }),
     },

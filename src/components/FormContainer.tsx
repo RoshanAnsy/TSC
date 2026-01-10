@@ -1,7 +1,8 @@
 import prisma from "@/lib/prisma";
 import FormModal from "./FormModal";
-import { auth } from "@clerk/nextjs/server";
-
+// import { auth } from "@clerk/nextjs/server";
+// import userProfileStore from "./store/user.store";
+import { userDetailManage } from "./userDetailManage";
 export type FormContainerProps = {
   table:
     | "teacher"
@@ -23,9 +24,12 @@ export type FormContainerProps = {
 
 const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
   let relatedData = {};
-
-  const { userId, sessionClaims } = auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  // const {role, userId}=userProfileStore();
+  const user = await userDetailManage();
+  const role = user?.role as string;
+  const userId = user?.id;
+  // const { userId, sessionClaims } = auth();
+  // const role = (sessionClaims?.metadata as { role?: string })?.role;
   const currentUserId = userId;
 
   if (type !== "delete") {

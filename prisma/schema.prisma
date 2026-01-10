@@ -7,13 +7,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Admin {
-  id       String @id
-  username String @unique
+// model Admin {
+//   id       String @id
+//   username String @unique
+// }
+
+enum UserRole {
+  ADMIN
+  TEACHER
+  STUDENT
+  PARENT
 }
 
+model Admin {
+  id       String @id @unique @default(uuid())
+  username String @unique
+  password String
+  role    UserRole
+
+}
+
+
 model Student {
-  id          String       @id
+  id          String        @id @unique @default(uuid())
   username    String       @unique
   name        String
   surname     String
@@ -36,7 +52,7 @@ model Student {
 }
 
 model Teacher {
-  id        String    @id
+  id        String    @id @unique @default(uuid())
   username  String    @unique
   name      String
   surname   String
@@ -54,7 +70,7 @@ model Teacher {
 }
 
 model Parent {
-  id        String    @id
+  id        String    @id @unique @default(uuid())
   username  String    @unique
   name      String
   surname   String

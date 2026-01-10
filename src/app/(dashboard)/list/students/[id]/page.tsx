@@ -4,20 +4,24 @@ import FormContainer from "@/components/FormContainer";
 import Performance from "@/components/Performance";
 import StudentAttendanceCard from "@/components/StudentAttendanceCard";
 import prisma from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+// import { auth } from "@clerk/nextjs/server";
 import { Class, Student } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-
+// import userProfileStore from "@/components/store/user.store";
+import { userDetailManage } from "@/components/userDetailManage";
 const SingleStudentPage = async ({
   params: { id },
 }: {
   params: { id: string };
 }) => {
-  const { sessionClaims } = auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  // const {role}=userProfileStore();
+  const user = await userDetailManage();
+  const role = user?.role as string;
+  // const { sessionClaims } = auth();
+  // const role = (sessionClaims?.metadata as { role?: string })?.role;
 
   const student:
     | (Student & {

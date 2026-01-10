@@ -6,7 +6,8 @@ import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Announcement, Class, Prisma } from "@prisma/client";
 import Image from "next/image";
-import { auth } from "@clerk/nextjs/server";
+// import userProfileStore from "@/components/store/user.store";
+import { userDetailManage } from "@/components/userDetailManage";
 
 
 type AnnouncementList = Announcement & { class: Class };
@@ -15,9 +16,12 @@ const AnnouncementListPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  
-  const { userId, sessionClaims } = auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  // const {role, userId}=userProfileStore();
+  const user = await userDetailManage();
+  const role = user?.role as string;
+  const userId = user?.id as string;
+  // const { userId, sessionClaims } = auth();
+  // const role = (sessionClaims?.metadata as { role?: string })?.role;
   const currentUserId = userId;
   
   const columns = [
@@ -45,6 +49,7 @@ const AnnouncementListPage = async ({
   ];
   
   const renderRow = (item: AnnouncementList) => (
+     
     <tr
       key={item.id}
       className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"

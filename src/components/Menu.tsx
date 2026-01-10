@@ -1,6 +1,10 @@
-import { currentUser } from "@clerk/nextjs/server";
+// "use client";
+
+// import { currentUser } from "@clerk/nextjs/server";
+
 import Image from "next/image";
 import Link from "next/link";
+import { userDetailManage } from "./userDetailManage";
 
 const menuItems = [
   {
@@ -118,8 +122,11 @@ const menuItems = [
 ];
 
 const Menu = async () => {
-  const user = await currentUser();
-  const role = user?.publicMetadata.role as string;
+  const user = await userDetailManage();
+  // const user = await currentUser();
+  // const {role}=userProfileStore();
+  const role= user?.role as string;
+  // const role = user?.publicMetadata.role as string;
   return (
     <div className="mt-4 text-sm">
       {menuItems.map((i) => (

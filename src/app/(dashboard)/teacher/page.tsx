@@ -1,9 +1,13 @@
 import Announcements from "@/components/Announcements";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
-import { auth } from "@clerk/nextjs/server";
-
-const TeacherPage = () => {
-  const { userId } = auth();
+// import { auth } from "@clerk/nextjs/server";
+// import userProfileStore from "@/components/store/user.store";
+import { userDetailManage } from "@/components/userDetailManage";
+const TeacherPage = async () => {
+  // const { userId } = auth();
+  // const {userId}=userProfileStore();
+  const user = await userDetailManage();
+  const userId = user?.id;
   return (
     <div className="flex-1 p-4 flex gap-4 flex-col xl:flex-row">
       {/* LEFT */}
