@@ -14,12 +14,12 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-
+    console.log("admin call before")
     // ✅ Find Admin user
     const user = await prisma.admin.findUnique({
       where: { username },
     });
-
+    console.log("admin call after",user)
     if (!user) {
       return NextResponse.json(
         { success: false, message: "User not found" },
