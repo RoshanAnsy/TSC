@@ -5,6 +5,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { userDetailManage } from "./userDetailManage";
+import router from "next/router";
+import LogoulogouttButton from "./LogOut";
 
 const menuItems = [
   {
@@ -111,12 +113,12 @@ const menuItems = [
         href: "/settings",
         visible: ["admin", "teacher", "student", "parent"],
       },
-      {
-        icon: "/logout.png",
-        label: "Logout",
-        href: "/logout",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
+      // {
+      //   icon: "/logout.png",
+      //   label: "Logout",
+      //   href: "/logout",
+      //   visible: ["admin", "teacher", "student", "parent"],
+      // },
     ],
   },
 ];
@@ -125,6 +127,27 @@ const Menu = async () => {
   const user = await userDetailManage();
   // const user = await currentUser();
   // const {role}=userProfileStore();
+  // const logOut=async()=>{
+  //   console.log("logout clicked")
+  // }
+  // const logOut = async () => {
+  //   try {
+  //     console.log("Logout clicked");
+
+  //     // Call logout API endpoint
+  //     const response = await fetch("/api/auth/logout", {
+  //       method: "POST",
+  //       credentials: "include",
+  //     });
+
+  //     if (response.ok) {
+  //       console.log("Token removed from cookies");
+  //       router.push("/sign-in");
+  //     }
+  //   } catch (error) {
+  //     console.error("Logout error:", error);
+  //   }
+  // };
   const role= user?.role as string;
   // const role = user?.publicMetadata.role as string;
   return (
@@ -150,6 +173,8 @@ const Menu = async () => {
           })}
         </div>
       ))}
+      <LogoulogouttButton />
+      {/* <button onClick={() => {logOut()}}><img src="/logout.png" alt="Logout" width={20} height={20} /></button> */}
     </div>
   );
 };

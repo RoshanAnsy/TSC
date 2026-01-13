@@ -91,48 +91,7 @@
 //   ],
 // };
 
-import { jwtVerify } from "jose";
-import { NextResponse } from "next/server";
-import { routeAccessMap } from "./lib/settings";
 
-const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
-
-export async function middleware(req: any) {
-  const token = req.cookies.get("auth_token")?.value;
-
-  if (!token) {
-    return NextResponse.redirect(new URL("/sign-in", req.url));
-  }
-
-  try {
-    const { payload } = await jwtVerify(token, secret);
-
-    const role = (payload.role as string).toLowerCase();
-    const pathname = req.nextUrl.pathname;
-
-    console.log("ROLE FROM JWT:", role);
-
-    for (const route in routeAccessMap) {
-      const regex = new RegExp(route);
-      if (regex.test(pathname)) {
-        if (!routeAccessMap[route].includes(role)) {
-          return NextResponse.redirect(
-            new URL(`/${role}`, req.url)
-          );
-        }
-      }
-    }
-
-    return NextResponse.next();
-  } catch (err) {
-    console.error("JWT VERIFY FAILED", err);
-    return NextResponse.redirect(new URL("/sign-in", req.url));
-  }
-}
-
-export const config = {
-  matcher: ["/admin/:path*", "/student/:path*", "/teacher/:path*", "/parent/:path*"],
-};
 
 
 
@@ -185,3 +144,62 @@ export const config = {
 //     "/((?!api|_next|login|favicon.ico).*)",
 //   ],
 // };
+
+
+
+import { jwtVerify } from "jose";
+import { NextResponse } from "next/server";
+import { routeAccessMap } from "./lib/settings";
+
+const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+
+export async function middleware(req: any) {
+  const token = req.cookies.get("auth_token")?.value;
+  const pathname = req.nextUrl.pathname;
+
+  // If user hits public routes, allow
+  const publicRoutes = ["/sign-in", "/sign-up"];
+  if (publicRoutes.includes(pathname)) {
+    return NextResponse.next();
+  }
+
+  // If no token, redirect to login
+  if (!token) {
+    return NextResponse.redirect(new URL("/sign-in", req.url));
+  }
+
+  try {
+    const { payload } = await jwtVerify(token, secret);
+    const role = (payload.role as string).toLowerCase();
+
+    // If signed in and lands on "/", send to role dashboard
+    if (pathname === "/") {
+      return NextResponse.redirect(new URL(`/${role}`, req.url));
+    }
+
+    // Validate route access
+    for (const route in routeAccessMap) {
+      const regex = new RegExp(route);
+      if (regex.test(pathname)) {
+        if (!routeAccessMap[route].includes(role)) {
+          return NextResponse.redirect(new URL(`/${role}`, req.url));
+        }
+      }
+    }
+
+    return NextResponse.next();
+  } catch (err) {
+    console.error("JWT VERIFY FAILED", err);
+    return NextResponse.redirect(new URL("/sign-in", req.url));
+  }
+}
+
+export const config = {
+  matcher: [
+    "/",                      // protect home
+    "/admin/:path*", 
+    "/student/:path*", 
+    "/teacher/:path*", 
+    "/parent/:path*",
+  ],
+};
